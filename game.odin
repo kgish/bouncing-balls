@@ -26,6 +26,12 @@ restart :: proc() {
     score = 0
 }
 
+bounce :: proc(sound: rl.Sound) {
+    rl.SetSoundPitch(sound, f32(rl.GetRandomValue(8, 12))/10)
+    rl.PlaySound(sound)
+    score = score + 1
+}
+
 reflect :: proc(dir, normal: rl.Vector2) -> rl.Vector2 {
     new_direction := linalg.reflect(dir, linalg.normalize(normal))
     return linalg.normalize(new_direction)
@@ -76,42 +82,33 @@ main :: proc() {
             if ball_pos.x + BALL_RADIUS > SCREEN_SIZE {
                 ball_pos.x = SCREEN_SIZE - BALL_RADIUS
                 ball_dir = reflect(ball_dir, { -1, 0 })
-                score = score + 1
+                bounce(hit_block_sound)
             }
 
             // Left edge
             if ball_pos.x - BALL_RADIUS < 0 {
                 ball_pos.x = BALL_RADIUS
                 ball_dir = reflect(ball_dir, { 1, 0 })
-                rl.SetSoundPitch(hit_block_sound, f32(rl.GetRandomValue(8, 12))/10)
-                rl.PlaySound(hit_block_sound)
-                score = score + 1
+                bounce(hit_block_sound)
             }
 
             // Top edge
             if ball_pos.y - BALL_RADIUS < 0 {
                 ball_pos.y = BALL_RADIUS
                 ball_dir = reflect(ball_dir, { 0, 1 })
-                rl.SetSoundPitch(hit_block_sound, f32(rl.GetRandomValue(8, 12))/10)
-                rl.PlaySound(hit_block_sound)
-                score = score + 1
+                bounce(hit_block_sound)
             }
 
             // Bottom edge
             if ball_pos.y + BALL_RADIUS > SCREEN_SIZE {
                 ball_pos.y = SCREEN_SIZE - BALL_RADIUS
                 ball_dir = reflect(ball_dir, { 0, -1 })
-                rl.SetSoundPitch(hit_block_sound, f32(rl.GetRandomValue(8, 12))/10)
-                rl.PlaySound(hit_block_sound)
-                score = score + 1
+                bounce(hit_block_sound)
             }
 
             if !game_over && ball_pos.y > SCREEN_SIZE + BALL_RADIUS * 6 {
                 game_over = true
                 rl.PlaySound(game_over_sound)
-                rl.SetSoundPitch(hit_block_sound, f32(rl.GetRandomValue(8, 12))/10)
-                rl.PlaySound(hit_block_sound)
-                score = score + 1
             }
 
             accumulated_time -= DT

@@ -63,6 +63,7 @@ main :: proc() {
                 paddle_middle := rl.Vector2 { f32(rl.GetRandomValue(-SCREEN_SIZE, SCREEN_SIZE)), f32(rl.GetRandomValue(-SCREEN_SIZE, SCREEN_SIZE)) }
                 ball_to_paddle := paddle_middle - ball_pos
                 ball_dir = linalg.normalize0(ball_to_paddle)
+                rl.SetMouseCursor(.DEFAULT)
                 started = true
             }
         } else if game_over {
@@ -132,8 +133,10 @@ main :: proc() {
             mouse_over := rl.CheckCollisionPointCircle({mouse_pos.x /4, mouse_pos.y / 4}  , ball_pos, BALL_RADIUS)
             if mouse_over {
                 rl.DrawCircleV(ball_pos, BALL_RADIUS, {  200, 90, 20, 100 })
+                rl.SetMouseCursor(.CROSSHAIR)
             } else {
                 rl.DrawCircleV(ball_pos, BALL_RADIUS, { 200, 90, 20, 255 })
+                rl.SetMouseCursor(.DEFAULT)
             }
 
             mouse_button_down := rl.IsMouseButtonDown(.LEFT)

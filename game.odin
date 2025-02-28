@@ -123,15 +123,27 @@ main :: proc() {
 
         rl.BeginMode2D(camera)
 
-        rl.DrawCircleV(ball_pos, BALL_RADIUS, { 200, 90, 20, 255 })
-
-        score_text := fmt.ctprint(score)
-        rl.DrawText(score_text, 5, 5, 10, rl.WHITE)
-
         if !started {
             start_text := fmt.ctprint("Start: SPACE")
             start_text_width := rl.MeasureText(start_text, 15)
             rl.DrawText(start_text, SCREEN_SIZE / 2 - start_text_width / 2, BALL_START_Y - 30, 15, rl.WHITE)
+
+            mouse_pos := rl.GetMousePosition()
+            mouse_over := rl.CheckCollisionPointCircle({mouse_pos.x /4, mouse_pos.y / 4}  , ball_pos, BALL_RADIUS)
+            if mouse_over {
+                rl.DrawCircleV(ball_pos, BALL_RADIUS, {  200, 90, 20, 100 })
+            } else {
+                rl.DrawCircleV(ball_pos, BALL_RADIUS, { 200, 90, 20, 255 })
+            }
+
+            mouse_button_down := rl.IsMouseButtonDown(.LEFT)
+            mouse_pos_text := fmt.ctprintf("(%v: %v) (%v: %v) %v %v", ball_pos.x, ball_pos.y, mouse_pos.x, mouse_pos.y, mouse_over, mouse_button_down)
+            rl.DrawText(mouse_pos_text, 5, 5, 10, rl.WHITE)
+        } else {
+            rl.DrawCircleV(ball_pos, BALL_RADIUS, { 200, 90, 20, 255 })
+
+            score_text := fmt.ctprint(score)
+            rl.DrawText(score_text, 5, 5, 10, rl.WHITE)
         }
 
         if game_over {

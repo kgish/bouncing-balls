@@ -27,7 +27,7 @@ restart :: proc() {
 }
 
 bounce :: proc(sound: rl.Sound) {
-    rl.SetSoundPitch(sound, f32(rl.GetRandomValue(8, 12))/10)
+    rl.SetSoundPitch(sound, f32(rl.GetRandomValue(8, 12)) / 10)
     rl.PlaySound(sound)
     score = score + 1
 }
@@ -45,6 +45,8 @@ main :: proc() {
 
     hit_block_sound := rl.LoadSound("hit_block.wav")
     game_over_sound := rl.LoadSound("game_over.wav")
+
+    mouse_drag := false
 
     restart()
 
@@ -130,9 +132,9 @@ main :: proc() {
             rl.DrawText(start_text, SCREEN_SIZE / 2 - start_text_width / 2, BALL_START_Y - 30, 15, rl.WHITE)
 
             mouse_pos := rl.GetMousePosition()
-            mouse_over := rl.CheckCollisionPointCircle({mouse_pos.x /4, mouse_pos.y / 4}  , ball_pos, BALL_RADIUS)
+            mouse_over := rl.CheckCollisionPointCircle({ mouse_pos.x / 4, mouse_pos.y / 4 }  , ball_pos, BALL_RADIUS)
             if mouse_over {
-                rl.DrawCircleV(ball_pos, BALL_RADIUS, {  200, 90, 20, 100 })
+                rl.DrawCircleV(ball_pos, BALL_RADIUS, { 200, 90, 20, 100 })
                 rl.SetMouseCursor(.CROSSHAIR)
             } else {
                 rl.DrawCircleV(ball_pos, BALL_RADIUS, { 200, 90, 20, 255 })
@@ -140,11 +142,23 @@ main :: proc() {
             }
 
             mouse_button_down := rl.IsMouseButtonDown(.LEFT)
+
+            if (mouse_button_down) {
+                if (!mouse_drag) {
+                    mouse_drag = true
+                }
+                rl.SetMouseCursor(.CROSSHAIR)
+                rl.DrawLineEx(ball_pos, { mouse_pos.x / 4, mouse_pos.y / 4 }, 1, { 255, 0, 0, 255 })
+            } else {
+                if (mouse_drag) {
+                    rl.SetMouseCursor(.DEFAULT)
+                }
+            }
+
             mouse_pos_text := fmt.ctprintf("(%v: %v) (%v: %v) %v %v", ball_pos.x, ball_pos.y, mouse_pos.x, mouse_pos.y, mouse_over, mouse_button_down)
             rl.DrawText(mouse_pos_text, 5, 5, 10, rl.WHITE)
         } else {
             rl.DrawCircleV(ball_pos, BALL_RADIUS, { 200, 90, 20, 255 })
-
             score_text := fmt.ctprint(score)
             rl.DrawText(score_text, 5, 5, 10, rl.WHITE)
         }

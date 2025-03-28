@@ -39,7 +39,7 @@ reflect :: proc(dir, normal: rl.Vector2) -> rl.Vector2 {
 
 main :: proc() {
     rl.SetConfigFlags({ .VSYNC_HINT })
-    rl.InitWindow(1280, 1280, "Breakout!")
+    rl.InitWindow(1280, 1280, "Bouncing Ball")
     rl.InitAudioDevice()
     rl.SetTargetFPS(500)
 

@@ -60,14 +60,6 @@ main :: proc() {
             }
 
             previous_ball_pos = ball_pos
-
-            if rl.IsKeyPressed(.SPACE) {
-                paddle_middle := rl.Vector2 { f32(rl.GetRandomValue(-SCREEN_SIZE, SCREEN_SIZE)), f32(rl.GetRandomValue(-SCREEN_SIZE, SCREEN_SIZE)) }
-                ball_to_paddle := paddle_middle - ball_pos
-                ball_dir = linalg.normalize0(ball_to_paddle)
-                rl.SetMouseCursor(.DEFAULT)
-                started = true
-            }
         } else if game_over {
             if rl.IsKeyPressed(.SPACE) {
                 restart()
@@ -127,9 +119,9 @@ main :: proc() {
         rl.BeginMode2D(camera)
 
         if !started {
-            start_text := fmt.ctprint("Start: SPACE")
-            start_text_width := rl.MeasureText(start_text, 15)
-            rl.DrawText(start_text, SCREEN_SIZE / 2 - start_text_width / 2, BALL_START_Y - 30, 15, rl.WHITE)
+        //            start_text := fmt.ctprint("Start: SPACE")
+        //            start_text_width := rl.MeasureText(start_text, 15)
+        //            rl.DrawText(start_text, SCREEN_SIZE / 2 - start_text_width / 2, BALL_START_Y - 30, 15, rl.WHITE)
 
             mouse_pos := rl.GetMousePosition()
             mouse_over := rl.CheckCollisionPointCircle({ mouse_pos.x / 4, mouse_pos.y / 4 }  , ball_pos, BALL_RADIUS)
@@ -144,19 +136,27 @@ main :: proc() {
             mouse_button_down := rl.IsMouseButtonDown(.LEFT)
 
             if (mouse_button_down) {
-                if (!mouse_drag) {
-                    mouse_drag = true
-                }
-                rl.SetMouseCursor(.CROSSHAIR)
+                mouse_drag = true
                 rl.DrawLineEx(ball_pos, { mouse_pos.x / 4, mouse_pos.y / 4 }, 1, { 255, 0, 0, 255 })
             } else {
-                if (mouse_drag) {
+                if mouse_drag {
+                    ball_to_screen_pos := ball_pos - { mouse_pos.x / 4, mouse_pos.y / 4 }
+                    ball_dir = linalg.normalize0(ball_to_screen_pos)
                     rl.SetMouseCursor(.DEFAULT)
+                    started = true
+                    mouse_drag = false
                 }
             }
 
-            mouse_pos_text := fmt.ctprintf("(%v: %v) (%v: %v) %v %v", ball_pos.x, ball_pos.y, mouse_pos.x, mouse_pos.y, mouse_over, mouse_button_down)
-            rl.DrawText(mouse_pos_text, 5, 5, 10, rl.WHITE)
+            if (mouse_drag) {
+                rl.SetMouseCursor(.CROSSHAIR)
+                force_text := fmt.ctprintf("%v", int(rl.Vector2Distance(ball_pos, { mouse_pos.x / 4, mouse_pos.y / 4 })))
+                rl.DrawText(force_text, 5, 5, 10, rl.WHITE)
+            } else if mouse_over {
+                rl.SetMouseCursor(.CROSSHAIR)
+            } else {
+                rl.SetMouseCursor(.DEFAULT)
+            }
         } else {
             rl.DrawCircleV(ball_pos, BALL_RADIUS, { 200, 90, 20, 255 })
             score_text := fmt.ctprint(score)

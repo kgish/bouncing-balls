@@ -41,7 +41,7 @@ main :: proc() {
     rl.SetConfigFlags({ .VSYNC_HINT })
     rl.InitWindow(1280, 1280, "Bouncing Ball")
     rl.InitAudioDevice()
-    rl.SetTargetFPS(500)
+    rl.SetTargetFPS(60)
 
     hit_block_sound := rl.LoadSound("hit_block.wav")
     game_over_sound := rl.LoadSound("game_over.wav")

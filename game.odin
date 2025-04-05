@@ -5,13 +5,13 @@ import "core:math/linalg"
 import "core:fmt"
 
 SCREEN_SIZE :: 320
-BALL_SPEED :: 450
 BALL_RADIUS :: 4
 BALL_START_X :: 160
 BALL_START_Y :: 160
 
 ball_pos: rl.Vector2
 ball_dir: rl.Vector2
+ball_speed: f32
 started: bool
 game_over: bool
 score: int
@@ -71,7 +71,7 @@ main :: proc() {
         for accumulated_time >= DT {
             previous_ball_pos = ball_pos
             //			previous_paddle_pos_x = paddle_pos_x
-            ball_pos += ball_dir * BALL_SPEED * DT
+            ball_pos += ball_dir * ball_speed * DT
 
             // Right edge
             if ball_pos.x + BALL_RADIUS > SCREEN_SIZE {
@@ -150,8 +150,9 @@ main :: proc() {
 
             if (mouse_drag) {
                 rl.SetMouseCursor(.CROSSHAIR)
-                force_text := fmt.ctprintf("%v", int(rl.Vector2Distance(ball_pos, { mouse_pos.x / 4, mouse_pos.y / 4 })))
-                rl.DrawText(force_text, 5, 5, 10, rl.WHITE)
+                ball_speed = min(rl.Vector2Distance(ball_pos, { mouse_pos.x / 4, mouse_pos.y / 4 }) * 10, f32(2500))
+                text := fmt.ctprintf("%v", int(ball_speed))
+                rl.DrawText(text, 5, 5, 10, rl.WHITE)
             } else if mouse_over {
                 rl.SetMouseCursor(.CROSSHAIR)
             } else {
